@@ -1,0 +1,34 @@
+dht11 DHT11;
+
+// tempHandler: function handler for Bitlash temp() function
+//	arg 1: dht11pin
+// returns temp in degrees C or
+// -300 = DHTLIB_ERROR_CHECKSUM or
+// -301 = DHTLIB_ERROR_TIMEOUT or
+// -302 = unknown error
+numvar temphandler(void) {
+  int dhtpin = getarg(1);
+  int chk = DHT11.read(dhtpin);
+  float temp;
+  switch (chk)
+  {
+    case DHTLIB_OK: 
+      temp = (float)DHT11.temperature;
+      Serial.println((float)DHT11.temperature, 2);
+      break;
+    case DHTLIB_ERROR_CHECKSUM: 
+      temp = -300;
+      break;
+    case DHTLIB_ERROR_TIMEOUT: 
+      temp = -301;
+      break;
+    default: 
+      temp = -302;
+      break;
+  }
+  delay (2000);
+  return temp;
+}
+
+        addBitlashFunction("temp", (bitlash_function) temphandler);
+
